@@ -3615,8 +3615,11 @@ DS.RESTAdapter = DS.Adapter.extend({
 
   findAll: function(store, type) {
     var root = this.rootForType(type), plural = this.pluralize(root);
-
-    this.ajax(this.buildURL(root), "GET", {
+// TODO refactor to either remote due to updates from upstream or add the ability to use
+// each model's buildURL/url across all the appropriate methods--not just this one
+    var url = this.buildURL(root);
+    if(type.buildURL) url = type.buildURL(url);
+    this.ajax(url, "GET", {
       success: function(json) {
         store.loadMany(type, json[plural]);
         this.sideload(store, type, json, plural);
